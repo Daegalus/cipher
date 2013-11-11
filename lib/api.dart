@@ -146,7 +146,7 @@ abstract class Digest {
   
   /**
    * Add [len] bytes of data contained in [inp], starting at position [inpOff]
-   * ti the digested input.
+   * to the digested input.
    */
   void update( Uint8List inp, int inpOff, int len );
   
@@ -224,4 +224,47 @@ abstract class PaddedBlockCipher implements ChainingBlockCipher {
    */
   int doFinal( Uint8List inp, int inpOff, Uint8List out, int outOff );
 
+}
+
+/**
+ * The base interface for implementations of message authentication codes (MACs).
+ */
+abstract class Mac {
+
+  /// The [Registry] for [Mac] algorithms
+  static final registry = new Registry<Mac>();
+
+  /// Create the MAC specified by the standard [algorithmName].
+  factory Mac( String algorithmName ) => registry.create(algorithmName);
+
+  /**
+   * Init the MAC with its initialization [params]. The type of
+   * [CipherParameters] depends on the algorithm being used (see the
+   * documentation of each implementation to find out more).
+   */
+  void init( CipherParameters params );
+
+  /// Return the name of the algorithm the MAC implements.
+  String get algorithmName;
+
+  /// Get this MAC's output size.
+  int get macSize;
+
+  /// Add one byte of data to the MAC input.
+  void updateByte( int inp );
+
+  /**
+   * Add [len] bytes of data contained in [inp], starting at position [inpOff]
+   * to the MAC input.
+   */
+  void update( Uint8List inp, int inpOff, int len );
+
+  /**
+   * Store the mac of previously given data in buffer [out] starting at
+   * offset [outOff]. This method returns the size of the digest.
+   */
+  int doFinal( Uint8List out, int outOff );
+
+  /// Reset the digest to its original state.
+  void reset();
 }

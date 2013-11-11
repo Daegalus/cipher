@@ -18,12 +18,16 @@ import "package:cipher/digests/ripemd160.dart";
 import "package:cipher/engines/aes_fast.dart";
 import "package:cipher/engines/salsa20.dart";
 import "package:cipher/engines/null_cipher.dart";
+import "package:cipher/engines/threefish.dart";
 
 import "package:cipher/modes/sic.dart";
 import "package:cipher/modes/cbc.dart";
 
 import "package:cipher/paddings/padded_block_cipher.dart";
 import "package:cipher/paddings/pkcs7.dart";
+
+import "package:cipher/macs/hmac.dart";
+import "package:cipher/macs/skein_mac.dart";
 
 /**
  *  This is the initializer method for this library. It must be called prior 
@@ -34,6 +38,9 @@ void initCipher() {
   // Register block ciphers
   BlockCipher.registry["AES"] = (_) => new AESFastEngine();
   BlockCipher.registry["Null"] = (_) => new NullBlockCipher();
+  BlockCipher.registry["Threefish256"] = (_) => new Threefish256();
+  BlockCipher.registry["Threefish512"] = (_) => new Threefish512();
+  BlockCipher.registry["Threefish1024"] = (_) => new Threefish1024();
 
   // Register chaining block ciphers
   ChainingBlockCipher.registry.registerDynamicFactory( (String algorithmName) {
@@ -84,6 +91,11 @@ void initCipher() {
     
     return new PaddedBlockCipherImpl(padding, underlyingCipher);
   });
+
+  Digest.registry["HMac"] = (_) => new HMac();
+  Digest.registry["Skein256Mac"] = (_) => new SkeinMac();
+  Digest.registry["Skein512Mac"] = (_) => new SkeinMac();
+  Digest.registry["Skein1024Mac"] = (_) => new SkeinMac();
   
 }
 

@@ -240,3 +240,49 @@ class Pack {
     }
   */
 }
+
+
+class ByteLong {
+
+  /**
+     * Creates a long from 8 bytes.
+     *
+     * Because Java does not provide unsigned data types this is a bit tricky.
+     * The functions takes care to process the sign bit correctly. The created
+     * {@code long} is in little endian order.
+     *
+     * @param b
+     *     The array that contains the bytes to combine.
+     * @param i
+     *     The offset into the byte array where the data starts.
+     */
+  static int GetUInt64(Uint8List b, int i) {
+    if (i >= b.length + 8) {
+      throw new Exception("Array Index out of bounds");
+    }
+    return (((b[i++] & 255) | ((b[i++] & 255) << 8)
+    | ((b[i++] & 255) << 16) | ((b[i++] & 255) << 24)) & 0xffffffff)
+    | (((b[i++] & 255) | ((b[i++] & 255) << 8)
+    | ((b[i++] & 255) << 16) | ((b[i] & 255) << 24)) << 32);
+  }
+
+  /**
+     * Disassmble an array of Long into a byte array.
+     *
+     * @param input
+     *     The long input array.
+     * @param output
+     *     The byte output array.
+     * @param offset
+     *     The offset into the output array.
+     * @param byteCount
+     *     The number of bytes to disassemble.
+     */
+  static void PutBytes(Uint64List input, Uint8List output, int offset, int byteCount) {
+    int j = 0;
+    for (int i = 0; i < byteCount; i++) {
+      output[offset++] = ((input[i >> 3] >> j) & 255);
+      j = (j + 8) & 63;
+    }
+  }
+}

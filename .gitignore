@@ -1,3 +1,7 @@
 packages
 pubspec.lock
 /.project
+
+#IntelliJ
+.idea/
+*.iml
